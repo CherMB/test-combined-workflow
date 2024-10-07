@@ -17,4 +17,4 @@ jobs:
           set -x
           echo "hello world"
           whoami
-          lsb_release -a
+          cat /etc/os-release
