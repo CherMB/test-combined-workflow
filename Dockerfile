@@ -18,3 +18,4 @@ ENV GOROOT=/usr/local/go
 ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
 CMD ["go", "version"]
+ 
