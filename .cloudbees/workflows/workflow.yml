@@ -15,12 +15,12 @@ permissions:
 jobs:
   build:
     outputs:
-      # Checkov outputs
-      checkov-job-output-critical: ${{ steps.checkov-step.outputs.critical-count }}
-      checkov-job-output-very-high: ${{ steps.checkov-step.outputs.very-high-count }}
-      checkov-job-output-high: ${{ steps.checkov-step.outputs.high-count }}
-      checkov-job-output-medium: ${{ steps.checkov-step.outputs.medium-count }}
-      checkov-job-output-low: ${{ steps.checkov-step.outputs.low-count }}
+      # # Checkov outputs
+      # checkov-job-output-critical: ${{ steps.checkov-step.outputs.critical-count }}
+      # checkov-job-output-very-high: ${{ steps.checkov-step.outputs.very-high-count }}
+      # checkov-job-output-high: ${{ steps.checkov-step.outputs.high-count }}
+      # checkov-job-output-medium: ${{ steps.checkov-step.outputs.medium-count }}
+      # checkov-job-output-low: ${{ steps.checkov-step.outputs.low-count }}
 
       # Grype outputs
       grype-job-output-critical: ${{ steps.grype-step.outputs.critical-count }}
