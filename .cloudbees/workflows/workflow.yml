@@ -29,7 +29,7 @@ jobs:
 
       - id: checkov-step
         name: Run Checkov Hybrid Plugin Scan
-        uses: cloudbees-io/checkov-hybrid-plugin@CBP-18640
+        uses: cloudbees-io/checkov-hybrid-plugin@v1
 
       - id: print-outputs-from-checkov-step
         name: Print Checkov Scan Results
