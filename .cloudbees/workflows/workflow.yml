@@ -97,3 +97,4 @@ jobs:
           echo "High Count: ${{ steps.grype-step.outputs.high-count }}"
           echo "Medium Count: ${{ steps.grype-step.outputs.medium-count }}"
           echo "Low Count: ${{ steps.grype-step.outputs.low-count }}"
+ 
