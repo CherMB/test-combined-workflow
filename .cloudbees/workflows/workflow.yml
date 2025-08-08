@@ -6,17 +6,44 @@ on:
   push:
     branches:
       - "**"
+
 permissions:
   scm-token-own: read
   scm-token-org: read
   id-token: write
+
 jobs:
   build:
+    outputs:
+      checkov-job-output-critical: ${{ steps.checkov-step.outputs.critical-count }}
+      checkov-job-output-very-high: ${{ steps.checkov-step.outputs.very-high-count }}
+      checkov-job-output-high: ${{ steps.checkov-step.outputs.high-count }}
+      checkov-job-output-medium: ${{ steps.checkov-step.outputs.medium-count }}
+      checkov-job-output-low: ${{ steps.checkov-step.outputs.low-count }}
     steps:
       - name: Get source code
         uses: cloudbees-io/checkout@v1
+
       - name: Setup git credentials
         uses: cloudbees-io/configure-git-global-credentials@v1
+
+      - id: checkov-step
+        name: Run Checkov Hybrid Plugin Scan
+        uses: cloudbees-io/checkov-hybrid-plugin@CBP-18640
+
+      - id: print-outputs-from-checkov-step
+        name: Print Checkov Scan Results
+        uses: docker://alpine:latest
+        run: |
+          echo "Checkov Scan Results:"
+          echo "Critical Count: ${{ steps.checkov-step.outputs.critical-count }}"
+          echo "Very High Count: ${{ steps.checkov-step.outputs.very-high-count }}"
+          echo "High Count: ${{ steps.checkov-step.outputs.high-count }}"
+          echo "Medium Count: ${{ steps.checkov-step.outputs.medium-count }}"
+          echo "Low Count: ${{ steps.checkov-step.outputs.low-count }}"
+
+
+
       # - name: Login to AWS
       #   uses: cloudbees-io/configure-aws-credentials@v1
       #   id: aws-login
@@ -26,15 +53,15 @@ jobs:
       #     role-duration-seconds: "3600" # optionally set the duration of the login token
       # - name: Configure container registry for AWS ECR
       #   uses: cloudbees-io/configure-ecr-credentials@v1
-      - id: build-container
-        name: Build container image
-        uses: cloudbees-io/kaniko@v1
-        kind: build
-        with:
-          destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/assets-findsecbugs-scanner:large-test-application
-          tar-path: container-image.tar
-          build-args: USER=cbp,TOKEN=${{ secrets.GH_SECURITY_PAT }}
-          dockerfile: dockerfile-test
+      # - id: build-container
+      #   name: Build container image
+      #   uses: cloudbees-io/kaniko@v1
+      #   kind: build
+      #   with:
+      #     destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/assets-findsecbugs-scanner:large-test-application
+      #     tar-path: container-image.tar
+      #     build-args: USER=cbp,TOKEN=${{ secrets.GH_SECURITY_PAT }}
+      #     dockerfile: dockerfile-test
       # - id: upload-binary
       #   name: Upload binary using action
       #   uses: cloudbees-io/asset-chain-utils-preprod/upload-binary@v1
