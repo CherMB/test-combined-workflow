@@ -70,3 +70,4 @@ jobs:
       #     file-type: BINARY_CONTAINER
       #     debug: "true"
       #     alias: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/assets-findsecbugs-scanner:large-test-application
+ 
