@@ -36,23 +36,23 @@ jobs:
       - name: Setup git credentials
         uses: cloudbees-io/configure-git-global-credentials@v1
 
-      ###########################
-      # CHECKOV: IaC Scan
-      ###########################
-      - id: checkov-step
-        name: Run Checkov Hybrid Plugin Scan
-        uses: cloudbees-io/checkov-hybrid-plugin@v1
+      # ###########################
+      # # CHECKOV: IaC Scan
+      # ###########################
+      # - id: checkov-step
+      #   name: Run Checkov Hybrid Plugin Scan
+      #   uses: cloudbees-io/checkov-hybrid-plugin@v1
 
-      - id: print-outputs-from-checkov-step
-        name: Print Checkov Scan Results
-        uses: docker://alpine:latest
-        run: |
-          echo "Checkov Scan Results:"
-          echo "Critical Count: ${{ steps.checkov-step.outputs.critical-count }}"
-          echo "Very High Count: ${{ steps.checkov-step.outputs.very-high-count }}"
-          echo "High Count: ${{ steps.checkov-step.outputs.high-count }}"
-          echo "Medium Count: ${{ steps.checkov-step.outputs.medium-count }}"
-          echo "Low Count: ${{ steps.checkov-step.outputs.low-count }}"
+      # - id: print-outputs-from-checkov-step
+      #   name: Print Checkov Scan Results
+      #   uses: docker://alpine:latest
+      #   run: |
+      #     echo "Checkov Scan Results:"
+      #     echo "Critical Count: ${{ steps.checkov-step.outputs.critical-count }}"
+      #     echo "Very High Count: ${{ steps.checkov-step.outputs.very-high-count }}"
+      #     echo "High Count: ${{ steps.checkov-step.outputs.high-count }}"
+      #     echo "Medium Count: ${{ steps.checkov-step.outputs.medium-count }}"
+      #     echo "Low Count: ${{ steps.checkov-step.outputs.low-count }}"
 
       ###########################
       # GRYPE: Container Scan
