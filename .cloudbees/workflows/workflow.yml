@@ -15,8 +15,32 @@ permissions:
 jobs:
   build:    
     steps:
-      - name: Get source code
-        uses: cloudbees-io/checkout@v1
+      - name: Build
+        id: build
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          # Create a hash based on current time and random data
+          hash=$(date +%s%N | sha256sum | awk '{print $1}')
+          echo "Generated hash: $hash"
 
-      - name: Setup git credentials
-        uses: cloudbees-io/configure-git-global-credentials@v1
+          # Make it available to other steps
+          echo "$hash" >> $CLOUDBEES_OUTPUTS/hash
+      
+      - name: Publish build artifact
+        id: publish-build
+        uses: cloudbees-io/register-build-artifact@v1
+        with:
+          version: ${{cloudbees.version}}
+          url: docker.io/library/shas/test
+          name: test-artifact-ninja:${{cloudbees.version}}
+      - name: Sleep
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          sleep 2
+      # - name: Get source code
+      #   uses: cloudbees-io/checkout@v1
+
+      # - name: Setup git credentials
+      #   uses: cloudbees-io/configure-git-global-credentials@v1
