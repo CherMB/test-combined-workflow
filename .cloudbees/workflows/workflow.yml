@@ -1,19 +1,13 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
-name: My workflow
-
+name: build deploy 2
 on:
   push:
     branches:
-      - "**"
-
-permissions:
-  scm-token-own: read
-  scm-token-org: read
-  id-token: write
-
+      - test-dora
+  workflow_dispatch:
 jobs:
-  build:    
+  build-deploy-artifact:
     steps:
       - name: Build
         id: build
@@ -27,20 +21,41 @@ jobs:
           # Make it available to other steps
           echo "$hash" >> $CLOUDBEES_OUTPUTS/hash
       
-      - name: Publish build artifact
-        id: publish-build
+      - name: Register build artifact
+        id: publish-build-1
         uses: cloudbees-io/register-build-artifact@v1
         with:
           version: ${{cloudbees.version}}
-          url: docker.io/library/shas/test
-          name: test-artifact-ninja:${{cloudbees.version}}
+          url: docker.io/library/shas/test-1
+          name: test-artifact-ninja-1:${{cloudbees.version}}
+      
+      - name: Register deployed artifact
+        kind: deploy
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ steps.publish-build-1.outputs.artifact-id }}
+          target-environment: preprod-us-west-2
+      
       - name: Sleep
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
         run: |
           sleep 2
-      # - name: Get source code
-      #   uses: cloudbees-io/checkout@v1
-
-      # - name: Setup git credentials
-      #   uses: cloudbees-io/configure-git-global-credentials@v1
+      - name: Register build artifact
+        id: publish-build-3
+        uses: cloudbees-io/register-build-artifact@v1
+        with:
+          version: ${{cloudbees.version}}
+          url: docker.io/library/shas/test-3
+          name: test-artifact-ninja-3:${{cloudbees.version}}
+      - name: Register deployed artifact
+        kind: deploy
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ steps.publish-build-3.outputs.artifact-id }}
+          target-environment: preprod-us-west-2
+      - name: Sleep
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          sleep 2
