@@ -89,10 +89,3 @@ jobs:
         with:
           test-type: selenium
           folder-name: ${{ cloudbees.workspace }}/publish-test-results/selenium/reports/
-
-      - name: Notify failures
-        if: ${{ failure() }}
-        uses: ./actions/notify-slack-action
-        with:
-          webhook-url: ${{ secrets.CBP_BT_SLACK_WEBHOOK_URL }}
-          action-name: publish-test-results
