@@ -6,6 +6,7 @@ on:
     branches:
       - "**"
   workflow_dispatch:
+
 jobs:
   build-deploy-artifact:
     steps:
@@ -59,3 +60,39 @@ jobs:
         shell: sh
         run: |
           sleep 2
+  
+  publish-test-results:
+    steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
+
+      - name: Publish Go test results
+        uses: cloudbees-io/publish-test-results@v1
+        with:
+          test-type: go
+          folder-name: ${{ cloudbees.workspace }}/publish-test-results/go
+
+      - name: Publish JMeter test results
+        uses: cloudbees-io/publish-test-results@v1
+        with:
+          test-type: jmeter
+          folder-name: ${{ cloudbees.workspace }}/publish-test-results/jmeter/
+
+      - name: Publish MSTest test results
+        uses: cloudbees-io/publish-test-results@v1
+        with:
+          test-type: mstest
+          folder-name: ${{ cloudbees.workspace }}/publish-test-results/mstest/*.xml
+
+      - name: Publish Selenium test results
+        uses: cloudbees-io/publish-test-results@v1
+        with:
+          test-type: selenium
+          folder-name: ${{ cloudbees.workspace }}/publish-test-results/selenium/reports/
+
+      - name: Notify failures
+        if: ${{ failure() }}
+        uses: ./actions/notify-slack-action
+        with:
+          webhook-url: ${{ secrets.CBP_BT_SLACK_WEBHOOK_URL }}
+          action-name: publish-test-results
