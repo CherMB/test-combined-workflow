@@ -13,87 +13,10 @@ permissions:
   id-token: write
 
 jobs:
-  build:
-    outputs:
-      # # Checkov outputs
-      # checkov-job-output-critical: ${{ steps.checkov-step.outputs.critical-count }}
-      # checkov-job-output-very-high: ${{ steps.checkov-step.outputs.very-high-count }}
-      # checkov-job-output-high: ${{ steps.checkov-step.outputs.high-count }}
-      # checkov-job-output-medium: ${{ steps.checkov-step.outputs.medium-count }}
-      # checkov-job-output-low: ${{ steps.checkov-step.outputs.low-count }}
-
-      # Grype outputs
-      grype-job-output-critical: ${{ steps.grype-step.outputs.critical-count }}
-      grype-job-output-very-high: ${{ steps.grype-step.outputs.very-high-count }}
-      grype-job-output-high: ${{ steps.grype-step.outputs.high-count }}
-      grype-job-output-medium: ${{ steps.grype-step.outputs.medium-count }}
-      grype-job-output-low: ${{ steps.grype-step.outputs.low-count }}
-
+  build:    
     steps:
       - name: Get source code
         uses: cloudbees-io/checkout@v1
 
       - name: Setup git credentials
         uses: cloudbees-io/configure-git-global-credentials@v1
-
-      # ###########################
-      # # CHECKOV: IaC Scan
-      # ###########################
-      # - id: checkov-step
-      #   name: Run Checkov Hybrid Plugin Scan
-      #   uses: cloudbees-io/checkov-hybrid-plugin@v1
-
-      # - id: print-outputs-from-checkov-step
-      #   name: Print Checkov Scan Results
-      #   uses: docker://alpine:latest
-      #   run: |
-      #     echo "Checkov Scan Results:"
-      #     echo "Critical Count: ${{ steps.checkov-step.outputs.critical-count }}"
-      #     echo "Very High Count: ${{ steps.checkov-step.outputs.very-high-count }}"
-      #     echo "High Count: ${{ steps.checkov-step.outputs.high-count }}"
-      #     echo "Medium Count: ${{ steps.checkov-step.outputs.medium-count }}"
-      #     echo "Low Count: ${{ steps.checkov-step.outputs.low-count }}"
-
-      ###########################
-      # GRYPE: Container Scan
-      ###########################
-
-      - name: Login to AWS
-        uses: cloudbees-io/configure-aws-credentials@v1
-        id: aws-login
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ vars.oidc_staging_iam_role }}
-          role-duration-seconds: "3600"
-
-      - name: Configure container registry for AWS ECR
-        uses: cloudbees-io/configure-ecr-credentials@v1
-
-      - name: Build Docker image and create tar file
-        uses: cloudbees-io/kaniko@v1
-        with:
-          destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/throwaway/actions/assets-trivy-scanner:qe-bdgolang
-          tar-path: container-image.tar
-
-      - id: grype-step
-        name: Grype Hybrid Plugin Scan
-        uses: cloudbees-io/grype-plugin@v1
-        with:
-          binary-tar-path: container-image.tar
-
-      - name: Source Directory Examine (Debug)
-        uses: docker://golang:1.20.3-alpine3.17
-        shell: sh
-        run: |
-          ls -latR /cloudbees/workspace/store
-
-      - id: print-outputs-from-grype-step
-        name: Print Grype Scan Results
-        uses: docker://alpine:latest
-        run: |
-          echo "Grype Scan Results:"
-          echo "Critical Count: ${{ steps.grype-step.outputs.critical-count }}"
-          echo "Very High Count: ${{ steps.grype-step.outputs.very-high-count }}"
-          echo "High Count: ${{ steps.grype-step.outputs.high-count }}"
-          echo "Medium Count: ${{ steps.grype-step.outputs.medium-count }}"
-          echo "Low Count: ${{ steps.grype-step.outputs.low-count }}"
