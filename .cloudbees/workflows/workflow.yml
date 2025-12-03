@@ -89,3 +89,4 @@ jobs:
         with:
           test-type: selenium
           folder-name: ${{ cloudbees.workspace }}/publish-test-results/selenium/reports/
+ 
